@@ -16,11 +16,11 @@ module "ecr-app" {
     "rules" : [
       {
         "rulePriority" : 2,
-        "description" : "Keep at least 2 images for any tag",
+        "description" : "Keep at least 10 images for any tag",
         "selection" : {
           "tagStatus" : "any",
           "countType" : "imageCountMoreThan",
-          "countNumber" : 2
+          "countNumber" : 10
         },
         "action" : {
           "type" : "expire"
