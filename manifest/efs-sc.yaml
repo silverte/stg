@@ -6,7 +6,7 @@ parameters:
   basePath: /apim
   directoryPerms: '755'
   ensureUniqueDirectory: 'true'
-  fileSystemId: fs-0512be2f6d078d0f4
+  fileSystemId: fs-04150fbf8d7c1bc0c
   gid: '1001'
   provisioningMode: efs-ap
   subPathPattern: ${.PVC.namespace}/${.PVC.name}

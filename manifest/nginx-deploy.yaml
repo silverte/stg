@@ -20,15 +20,15 @@ spec:
           value: 'arm64'
       nodeSelector:
         arch-type: arm64
-      resources:
-        limits:
-          cpu: 200m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
       containers:
         - name: nginx-container
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           image: nginx
           volumeMounts:
             - name: timezone

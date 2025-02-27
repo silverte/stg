@@ -10,6 +10,7 @@ export ENVIRONMENT="stg"
 # https://github.com/kubernetes-sigs/metrics-server/tree/master/charts/metrics-server
 #####################################################################################
 helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+helm repo update
 helm upgrade --install metrics-server metrics-server/metrics-server \
                              --namespace ${NAMESPACE} \
                              --set tolerations[0].key=CriticalAddonsOnly \
@@ -48,24 +49,25 @@ eksctl create iamserviceaccount \
 
 # Install AWS Load Balancer Controller
 helm repo add eks https://aws.github.io/eks-charts
+helm repo update
 helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
                              --namespace ${NAMESPACE} \
                              --set clusterName=${CLUSTER_NAME} \
                              --set serviceAccount.create=false \
                              --set serviceAccount.name=aws-load-balancer-controller \
-                            #  --set replicaCount=1 \
                              --set tolerations[0].key=CriticalAddonsOnly \
                              --set tolerations[0].operator=Exists \
                              --set tolerations[0].effect=NoSchedule \
                              --set region=$REGION \
                              --set vpcId=$(aws eks describe-cluster --name $CLUSTER_NAME --query 'cluster.resourcesVpcConfig.vpcId' --output text)                      
+                            #  --set replicaCount=1
 
 #####################################################################################
 # Karpenter
 # https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/
 # https://github.com/aws/karpenter-provider-aws/blob/main/charts/karpenter/values.yaml
 #####################################################################################
-KARPENTER_VERSION="1.1.1"
+KARPENTER_VERSION="1.2.1"
 TEMPOUT="$(mktemp)"
 
 # To create the AWSServiceRoleForEC2Spot service-linked role for EC2 Spot Instances in your AWS account
@@ -94,6 +96,7 @@ eksctl create iamserviceaccount \
 
 # Logout of helm registry to perform an unauthenticated pull against the public ECR
 helm registry logout public.ecr.aws
+helm repo update
 helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --version "${KARPENTER_VERSION}" --namespace "${NAMESPACE}" \
   --set "settings.clusterName=${CLUSTER_NAME}" \
   --set "settings.interruptionQueue=${CLUSTER_NAME}" \
@@ -101,8 +104,8 @@ helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --vers
   --set serviceAccount.name=karpenter \
   --set tolerations[0].key=CriticalAddonsOnly \
   --set tolerations[0].operator=Exists \
-  --set tolerations[0].effect=NoSchedule \
-  --set replicas=1
+  --set tolerations[0].effect=NoSchedule
+# --set replicas=1
 #   --set controller.resources.requests.cpu=1 \
 #   --set controller.resources.requests.memory=1Gi \
 #   --set controller.resources.limits.cpu=1 \
@@ -117,14 +120,14 @@ helm repo add kyverno https://kyverno.github.io/kyverno/
 helm repo update
 
 #Kyverno 설치
-helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace 
-     #    --set tolerations[0].key=CriticalAddonsOnly \
-     #    --set tolerations[0].operator=Exists \
-     #    --set tolerations[0].effect=NoSchedule
-     #    --set admissionController.replicas=3 \
-     #    --set backgroundController.replicas=2 \
-     #    --set cleanupController.replicas=2 \
-     #    --set reportsController.replicas=2
+helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace \
+        --set tolerations[0].key=CriticalAddonsOnly \
+        --set tolerations[0].operator=Exists \
+        --set tolerations[0].effect=NoSchedule
+        # --set admissionController.replicas=3 \
+        # --set backgroundController.replicas=2 \
+        # --set cleanupController.replicas=2 \
+        # --set reportsController.replicas=2
 
 #####################################################################################
 # KEDA

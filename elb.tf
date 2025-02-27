@@ -6,10 +6,11 @@ module "alb_vm" {
   source = "terraform-aws-modules/alb/aws"
   create = var.create_alb_vm
 
-  name     = "alb-${var.service}-${var.environment}-vm"
-  vpc_id   = data.aws_vpc.vpc.id
-  subnets  = data.aws_subnets.elb.ids
-  internal = true
+  name                       = "alb-${var.service}-${var.environment}-vm"
+  vpc_id                     = data.aws_vpc.vpc.id
+  subnets                    = data.aws_subnets.elb.ids
+  internal                   = true
+  enable_deletion_protection = true
 
   # Security Group
   create_security_group = false
@@ -97,9 +98,22 @@ module "nlb_vm" {
   name               = "nlb-${var.service}-${var.environment}-vm"
   load_balancer_type = "network"
   vpc_id             = data.aws_vpc.vpc.id
-  subnets            = data.aws_subnets.elb.ids
-  internal           = true
-
+  # subnets                          = data.aws_subnets.elb.ids
+  internal                         = true
+  enable_deletion_protection       = true
+  enable_cross_zone_load_balancing = false
+  subnet_mapping = [
+    {
+      subnet_id = data.aws_subnets.elb_a.ids[0]
+      # subnet_id            = "subnet-02d8c40410447f0b7"
+      private_ipv4_address = "10.3.97.133"
+    },
+    {
+      subnet_id = data.aws_subnets.elb_c.ids[0]
+      # subnet_id            = "subnet-025ff4832f96d5c28"
+      private_ipv4_address = "10.3.97.166"
+    },
+  ]
   # Security Group
   create_security_group = false
   security_groups       = [module.security_group_nlb_vm.security_group_id]
@@ -191,8 +205,22 @@ module "nlb_container" {
   name               = "nlb-${var.service}-${var.environment}-container"
   load_balancer_type = "network"
   vpc_id             = data.aws_vpc.vpc.id
-  subnets            = data.aws_subnets.elb.ids
-  internal           = true
+  # subnets                          = data.aws_subnets.elb.ids
+  internal                         = true
+  enable_deletion_protection       = true
+  enable_cross_zone_load_balancing = false
+  subnet_mapping = [
+    {
+      subnet_id = data.aws_subnets.elb_a.ids[0]
+      # subnet_id            = "subnet-02d8c40410447f0b7"
+      private_ipv4_address = "10.3.97.144"
+    },
+    {
+      subnet_id = data.aws_subnets.elb_c.ids[0]
+      # subnet_id            = "subnet-025ff4832f96d5c28"
+      private_ipv4_address = "10.3.97.177"
+    },
+  ]
 
   create_security_group = false
   security_groups       = [module.security_group_nlb_container.security_group_id]

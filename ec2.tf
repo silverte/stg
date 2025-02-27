@@ -772,3 +772,56 @@ module "ec2_homepage" {
     },
   )
 }
+
+###################################################################################
+# Admin(temporary)
+###################################################################################
+module "ec2_admin" {
+  source = "terraform-aws-modules/ec2-instance/aws"
+  create = var.create_ec2_admin
+
+  name = "ec2-${var.service}-${var.environment}-admin"
+
+  instance_type               = var.ec2_admin_instance_type
+  availability_zone           = element(local.azs, 0)
+  subnet_id                   = data.aws_subnets.app_vm_a.ids[0]
+  vpc_security_group_ids      = [module.security_group_ec2_admin.security_group_id]
+  associate_public_ip_address = false
+  disable_api_stop            = false
+  disable_api_termination     = true
+  # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
+  hibernation                 = false
+  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_replace_on_change = true
+  private_ip                  = var.ec2_admin_private_ip
+
+  metadata_options = {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+    instance_metadata_tags      = "enabled"
+  }
+
+  enable_volume_tags = false
+  root_block_device = [
+    {
+      encrypted   = true
+      kms_key_id  = data.aws_kms_key.ebs.arn
+      volume_type = "gp3"
+      volume_size = var.ec2_root_volume_size
+      tags = merge(
+        local.tags,
+        {
+          "Name" = "ebs-${var.service}-${var.environment}-admin-root"
+        },
+      )
+    },
+  ]
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "ec2-${var.service}-${var.environment}-admin"
+    },
+  )
+}

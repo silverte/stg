@@ -60,6 +60,30 @@ data "aws_subnets" "elb" {
   }
 }
 
+data "aws_subnets" "elb_a" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = ["*elb*a*"] # database subnet에 대한 태그 패턴
+  }
+}
+
+data "aws_subnets" "elb_c" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = ["*elb*c*"] # database subnet에 대한 태그 패턴
+  }
+}
+
 data "aws_subnets" "endpoint" {
   filter {
     name   = "vpc-id"

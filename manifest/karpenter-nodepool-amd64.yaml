@@ -25,10 +25,10 @@ spec:
 
       # Provisioned nodes will have these taints
       # Taints may prevent pods from scheduling if they are not tolerated by the pod.
-      taints:
-        - key: arch-type
-          value: amd64
-          effect: NoSchedule
+      # taints:
+      #   - key: arch-type
+      #     value: amd64
+      #     effect: NoSchedule
 
       # Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this
       # NodePool. These taints are expected to be temporary and some other entity (e.g. a DaemonSet) is responsible for

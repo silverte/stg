@@ -352,3 +352,34 @@ variable "ec2_homepage_private_ip" {
   type        = string
   default     = ""
 }
+
+#######################################################
+# EC2 admin
+#######################################################
+# Whether to create an External Interface (True or False)
+variable "create_ec2_admin" {
+  description = "Whether to create an Admin"
+  type        = bool
+  default     = false
+}
+
+# EC2 Instance Type
+variable "ec2_admin_instance_type" {
+  description = "EC2 Instance Type"
+  type        = string
+  default     = "t4g.medium"
+}
+
+# EC2 EBS Volume size
+variable "ec2_admin_ebs_volume_size" {
+  description = "EC2 EBS Volume size"
+  type        = number
+  default     = 100
+}
+
+# EC2 Private IP address
+variable "ec2_admin_private_ip" {
+  description = "EC2 Private IP address"
+  type        = string
+  default     = ""
+}

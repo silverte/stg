@@ -331,6 +331,25 @@ module "security_group_ec2_external_interface" {
   )
 }
 
+module "security_group_ec2_admin" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 5.0"
+  create  = var.create_security_group
+
+  name            = "scg-${var.service}-${var.environment}-ec2-admin"
+  use_name_prefix = false
+  description     = "Security group for EC2 admin"
+  vpc_id          = data.aws_vpc.vpc.id
+
+  tags = merge(
+    local.tags,
+    {
+      "Name" = "scg-${var.service}-${var.environment}-ec2-admin"
+    },
+  )
+}
+
+
 ###################################################################################
 # Security Group for Elasticache
 ###################################################################################
