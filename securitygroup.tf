@@ -4,7 +4,8 @@
 module "security_group_rds_maria" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
-  create  = var.create_security_group
+  #create  = var.create_security_group
+  create = false
 
   name            = "scg-${var.service}-${var.environment}-rds-${var.rds_mariadb_name}"
   use_name_prefix = false
@@ -14,7 +15,7 @@ module "security_group_rds_maria" {
   tags = merge(
     local.tags,
     {
-      "Name" = "scg-${var.service}-${var.environment}-${var.rds_mariadb_name}"
+      "Name" = "scg-${var.service}-${var.environment}-rds-${var.rds_mariadb_name}"
     },
   )
 }
@@ -22,7 +23,8 @@ module "security_group_rds_maria" {
 module "security_group_oracle" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
-  create  = var.create_security_group
+  #create  = var.create_security_group
+  create = false
 
   name            = "scg-${var.service}-${var.environment}-rds-${var.rds_oracle_name}"
   use_name_prefix = false
@@ -32,7 +34,7 @@ module "security_group_oracle" {
   tags = merge(
     local.tags,
     {
-      "Name" = "scg-${var.service}-${var.environment}-${var.rds_oracle_name}"
+      "Name" = "scg-${var.service}-${var.environment}-rds-${var.rds_oracle_name}"
     },
   )
 }

@@ -231,8 +231,8 @@ module "mountpoint_s3_csi_irsa_role" {
     }
   )
   attach_mountpoint_s3_csi_policy = true
-  mountpoint_s3_csi_bucket_arns   = ["arn:aws:s3:::s3-esp-${var.environment}-cm-contents", "arn:aws:s3:::s3-esp-${var.environment}-cm-files", "arn:aws:s3:::s3-esp-${var.environment}-fo-static"]
-  mountpoint_s3_csi_path_arns     = ["arn:aws:s3:::s3-esp-${var.environment}-cm-contents/*", "arn:aws:s3:::s3-esp-${var.environment}-cm-files/*", "arn:aws:s3:::s3-esp-${var.environment}-fo-static/*"]
+  mountpoint_s3_csi_bucket_arns   = ["arn:aws:s3:::s3-esp-dev-cm-contents", "arn:aws:s3:::s3-esp-dev-cm-files", "arn:aws:s3:::s3-esp-dev-fo-static"]
+  mountpoint_s3_csi_path_arns     = ["arn:aws:s3:::s3-esp-dev-cm-contents/*", "arn:aws:s3:::s3-esp-dev-cm-files/*", "arn:aws:s3:::s3-esp-dev-fo-static/*"]
 
   oidc_providers = {
     ex = {

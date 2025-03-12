@@ -32,7 +32,7 @@ module "elasticache-data" {
   # Subnet Group
   subnet_group_name        = "ecsg-${var.service}-${var.environment}"
   subnet_group_description = "elasticache subnet group"
-  subnet_ids               = [data.aws_subnets.app_pod.ids[0]]
+  subnet_ids               = data.aws_subnets.app_pod.ids
   # availability_zone = module.vpc.azs
   # Sandbox, Dev, Stage Only
   availability_zone = element(local.azs, 0)

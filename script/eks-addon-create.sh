@@ -105,11 +105,10 @@ helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --vers
   --set tolerations[0].key=CriticalAddonsOnly \
   --set tolerations[0].operator=Exists \
   --set tolerations[0].effect=NoSchedule
-# --set replicas=1
-#   --set controller.resources.requests.cpu=1 \
-#   --set controller.resources.requests.memory=1Gi \
-#   --set controller.resources.limits.cpu=1 \
-#   --set controller.resources.limits.memory=1Gi \
+  # --set controller.resources.requests.cpu=1 \
+  # --set controller.resources.requests.memory=1Gi \
+  # --set controller.resources.limits.cpu=1 \
+  # --set controller.resources.limits.memory=1Gi
 
 #####################################################################################
 # Kyverno
@@ -120,14 +119,15 @@ helm repo add kyverno https://kyverno.github.io/kyverno/
 helm repo update
 
 #Kyverno 설치
-helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace \
-        --set tolerations[0].key=CriticalAddonsOnly \
-        --set tolerations[0].operator=Exists \
-        --set tolerations[0].effect=NoSchedule
-        # --set admissionController.replicas=3 \
-        # --set backgroundController.replicas=2 \
-        # --set cleanupController.replicas=2 \
-        # --set reportsController.replicas=2
+helm upgrade --install kyverno kyverno/kyverno \
+        --namespace kyverno --create-namespace \
+        --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key=arch-type \
+        --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
+        --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=arm64 \
+        --set admissionController.replicas=3 \
+        --set backgroundController.replicas=2 \
+        --set cleanupController.replicas=2 \
+        --set reportsController.replicas=2
 
 #####################################################################################
 # KEDA
@@ -140,3 +140,30 @@ helm install keda kedacore/keda --namespace kube-system \
               --set tolerations[0].key=CriticalAddonsOnly \
               --set tolerations[0].operator=Exists \
               --set tolerations[0].effect=NoSchedule
+
+#####################################################################################
+# Secret for Private ECR
+# apim, whatap
+#####################################################################################
+kubectl create secret docker-registry esp-apim-stg-ecr-secret \
+  --docker-server=026090541481.dkr.ecr.ap-northeast-2.amazonaws.com \
+  --docker-username=AWS \
+  --docker-password=$(aws ecr get-login-password --region ap-northeast-2) \
+  --namespace esp-apim-stg
+
+kubectl create secret docker-registry whatap-monitoring-ecr-secret \
+  --docker-server=026090541481.dkr.ecr.ap-northeast-2.amazonaws.com \
+  --docker-username=AWS \
+  --docker-password=$(aws ecr get-login-password --region ap-northeast-2) \
+  --namespace whatap-monitoring
+
+#####################################################################################
+# Namespace
+#####################################################################################
+kubectl create ns esp-apim-stg
+kubectl create ns esp-core    
+kubectl create ns esp-fo-stg  
+kubectl create ns esp-hcas-stg
+kubectl create ns esp-hims-stg
+kubectl create ns esp-hpas-stg
+kubectl create ns esp-if-stg     

@@ -23,7 +23,6 @@ spec:
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
-
 kind: PersistentVolumeClaim
 metadata:
   name: pvc-s3-esp-stg-cm-files
@@ -43,12 +42,15 @@ metadata:
   name: s3-app-test
   namespace: esp-hims-stg
 spec:
-  # tolerations:
-  #   - key: 'capacity-type'
-  #     operator: Equal
-  #     value: on-demand-arm64
-  # nodeSelector:
-  #   capacity-type: on-demand
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "arch-type"
+            operator: In
+            values:
+            - "arm64"
   containers:
     - name: app
       resources:
