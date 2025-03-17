@@ -257,13 +257,15 @@ module "aurora-postgresql" {
   master_username             = var.rds_aurora_master_username
   manage_master_user_password = true
   port                        = var.rds_aurora_port
+  instance_class              = var.rds_aurora_cluster_instance_class
   instances = {
-    1 = {
-      instance_class      = var.rds_aurora_cluster_instance_class
-      publicly_accessible = false
-      availability_zone   = element(local.azs, 0)
-    }
+    1 = {},
+    2 = {}
   }
+  # autoscaling_enabled      = true
+  # autoscaling_min_capacity = 2
+  # autoscaling_max_capacity = 2
+
   vpc_id               = data.aws_vpc.vpc.id
   db_subnet_group_name = try(aws_db_subnet_group.rds_subnet_group[0].name, "")
   publicly_accessible  = false
