@@ -55,10 +55,10 @@ module "eks" {
         enableNetworkPolicy : "true",
       })
     }
-    # eks-pod-identity-agent = {
-    #   before_compute = true
-    #   most_recent    = true
-    # }
+    eks-pod-identity-agent = {
+      before_compute = true
+      most_recent    = true
+    }
     # aws-ebs-csi-driver = {
     #   most_recent = true
     #   # service_account_role_arn = try(module.ebs_csi_irsa_role[0].iam_role_arn, "")

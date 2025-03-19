@@ -160,10 +160,48 @@ kubectl create secret docker-registry whatap-monitoring-ecr-secret \
 #####################################################################################
 # Namespace
 #####################################################################################
-kubectl create ns esp-apim-stg
-kubectl create ns esp-core    
+kubectl create ns esp-apim-stg 
 kubectl create ns esp-fo-stg  
 kubectl create ns esp-hcas-stg
 kubectl create ns esp-hims-stg
 kubectl create ns esp-hpas-stg
 kubectl create ns esp-if-stg     
+
+#####################################################################################
+# create pod identity association
+#####################################################################################
+eksctl create podidentityassociation \
+    --cluster ${CLUSTER_NAME} \
+    --namespace "esp-fo-${ENVIRONMENT}" \
+    --service-account-name default \
+    --permission-policy-arns="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/policy-esp-${ENVIRONMENT}-container-app-default" \
+    --region $REGION \
+    --role-name "role-esp-${ENVIRONMENT}-container-app-default"
+
+eksctl create podidentityassociation \
+    --cluster ${CLUSTER_NAME} \
+    --namespace "esp-hcas-${ENVIRONMENT}" \
+    --service-account-name default \
+    --region $REGION \
+    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+
+eksctl create podidentityassociation \
+    --cluster ${CLUSTER_NAME} \
+    --namespace "esp-hims-${ENVIRONMENT}" \
+    --service-account-name default \
+    --region $REGION \
+    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+
+eksctl create podidentityassociation \
+    --cluster ${CLUSTER_NAME} \
+    --namespace "esp-hpas-${ENVIRONMENT}" \
+    --service-account-name default \
+    --region $REGION \
+    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+
+eksctl create podidentityassociation \
+    --cluster ${CLUSTER_NAME} \
+    --namespace "esp-if-${ENVIRONMENT}" \
+    --service-account-name default \
+    --region $REGION \
+    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"

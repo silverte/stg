@@ -38,3 +38,6 @@ terraform.rc
 
 # Ignore key pair file
 .pem
+
+# ec2 user data
+user_data.sh

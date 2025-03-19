@@ -25,6 +25,7 @@ module "ec2_workbench" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_workbench_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -95,6 +96,7 @@ module "ec2_batch_worker" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_batch_worker_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -165,6 +167,7 @@ module "ec2_external_interface" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_external_interface_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -235,6 +238,7 @@ module "ec2_armedis" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_armedis_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -305,6 +309,7 @@ module "ec2_market" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_market_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -375,6 +380,7 @@ module "ec2_pay_cms" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_pay_cms_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -445,6 +451,7 @@ module "ec2_pay_was" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_pay_was_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -515,6 +522,7 @@ module "ec2_checkin_adm" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_checkin_adm_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -585,6 +593,7 @@ module "ec2_checkin_api" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_checkin_api_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -655,6 +664,7 @@ module "ec2_healthcare" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_healthcare_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -725,6 +735,7 @@ module "ec2_homepage" {
   user_data_base64            = base64encode(file("./user_data.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_homepage_private_ip
+  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
 
   metadata_options = {
     http_endpoint               = "enabled"
@@ -791,9 +802,10 @@ module "ec2_admin" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_deprecated.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_admin_private_ip
+  iam_instance_profile        = "role-esp-stg-ssm"
 
   metadata_options = {
     http_endpoint               = "enabled"
