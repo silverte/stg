@@ -102,7 +102,7 @@ module "eks" {
       ami_type        = "AL2023_ARM_64_STANDARD"
       name            = "eksng-${var.service}-${var.environment}-mgmt"
       use_name_prefix = false
-      instance_types  = ["c7g.large"]
+      instance_types  = ["c7g.2xlarge"]
       capacity_type   = "ON_DEMAND"
 
       lanch_template_name             = "ekslt-${var.environment}-mgmt"

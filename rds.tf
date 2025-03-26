@@ -250,17 +250,18 @@ module "aurora-postgresql" {
   create                            = var.create_aurora_postresql
   create_db_cluster_parameter_group = var.create_aurora_postresql
 
-  name                        = "rds-${var.service}-${var.environment}-${var.rds_aurora_cluster_name}"
-  engine                      = var.rds_aurora_cluster_engine
-  engine_version              = var.rds_aurora_cluster_engine_version
-  database_name               = var.rds_aurora_cluster_database_name
-  master_username             = var.rds_aurora_master_username
-  manage_master_user_password = true
-  port                        = var.rds_aurora_port
-  instance_class              = var.rds_aurora_cluster_instance_class
+  name                                 = "rds-${var.service}-${var.environment}-${var.rds_aurora_cluster_name}"
+  engine                               = var.rds_aurora_cluster_engine
+  engine_version                       = var.rds_aurora_cluster_engine_version
+  database_name                        = var.rds_aurora_cluster_database_name
+  master_username                      = var.rds_aurora_master_username
+  manage_master_user_password          = true
+  manage_master_user_password_rotation = false
+  port                                 = var.rds_aurora_port
+  instance_class                       = var.rds_aurora_cluster_instance_class
   instances = {
     1 = {},
-    2 = {}
+    # 2 = {}
   }
   # autoscaling_enabled      = true
   # autoscaling_min_capacity = 2
@@ -285,17 +286,17 @@ module "aurora-postgresql" {
   db_cluster_parameter_group_use_name_prefix = false
   db_cluster_parameter_group_family          = var.rds_aurora_cluster_pg_family
   db_cluster_parameter_group_description     = "aurora cluster parameter group"
-  # db_cluster_parameter_group_parameters = [
-  # {
-  #   name         = "log_min_duration_statement"
-  #   value        = 4000
-  #   apply_method = "immediate"
-  #   }, {
-  #   name         = "rds.force_ssl"
-  #   value        = 1
-  #   apply_method = "immediate"
-  # }
-  # ]
+  db_cluster_parameter_group_parameters = [
+    {
+      name         = "orafce.timezone"
+      value        = "Asia/Seoul"
+      apply_method = "immediate"
+      }, {
+      name         = "timezone"
+      value        = "Asia/Seoul"
+      apply_method = "immediate"
+    }
+  ]
   # create_db_parameter_group      = true
   # db_parameter_group_name        = "pg-${var.service}-${var.environment}-${var.rds_aurora_cluster_name}"
   # db_parameter_group_family      = "aurora-postgresql14"
