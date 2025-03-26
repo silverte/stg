@@ -22,7 +22,7 @@ module "ec2_workbench" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_workbench_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -93,7 +93,7 @@ module "ec2_batch_worker" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_batch_worker_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -164,7 +164,7 @@ module "ec2_external_interface" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_external_interface_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -235,7 +235,7 @@ module "ec2_armedis" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_armedis_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -306,7 +306,7 @@ module "ec2_market" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_market_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -377,7 +377,7 @@ module "ec2_pay_cms" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_pay_cms_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -448,7 +448,7 @@ module "ec2_pay_was" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_pay_was_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -519,7 +519,7 @@ module "ec2_checkin_adm" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_checkin_adm_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -590,7 +590,7 @@ module "ec2_checkin_api" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_checkin_api_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -661,7 +661,7 @@ module "ec2_healthcare" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_healthcare_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
@@ -732,7 +732,7 @@ module "ec2_homepage" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_homepage_private_ip
   iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
