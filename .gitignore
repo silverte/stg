@@ -40,5 +40,5 @@ terraform.rc
 .pem
 
 # ec2 user data
-user_data.sh
+user_data_app.sh
 user_data_deprecated.sh
