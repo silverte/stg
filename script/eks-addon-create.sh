@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 export CLUSTER_NAME=$(kubectl config view --minify --output 'jsonpath={.clusters[0].name}'| awk -F'/' '{print $2}')
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 export NAMESPACE="kube-system"
@@ -114,20 +117,35 @@ helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --vers
 # Kyverno
 # https://kyverno.io/
 #####################################################################################
+NODEGROUP="eksng-esp-${ENVIRONMENT}-mgmt"
 # kyverno 레포지토리 추가
 helm repo add kyverno https://kyverno.github.io/kyverno/
 helm repo update
 
 #Kyverno 설치
 helm upgrade --install kyverno kyverno/kyverno \
-        --namespace kyverno --create-namespace \
-        --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key=arch-type \
-        --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
-        --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=arm64 \
-        --set admissionController.replicas=3 \
-        --set backgroundController.replicas=2 \
-        --set cleanupController.replicas=2 \
-        --set reportsController.replicas=2
+  --namespace kyverno \
+  --create-namespace \
+  --set admissionController.nodeSelector."eks\.amazonaws\.com/nodegroup"="$NODEGROUP" \
+  --set admissionController.tolerations[0].key="CriticalAddonsOnly" \
+  --set admissionController.tolerations[0].operator="Exists" \
+  --set admissionController.tolerations[0].effect="NoSchedule" \
+  --set admissionController.replicas=3 \
+  --set backgroundController.nodeSelector."eks\.amazonaws\.com/nodegroup"="$NODEGROUP" \
+  --set backgroundController.tolerations[0].key="CriticalAddonsOnly" \
+  --set backgroundController.tolerations[0].operator="Exists" \
+  --set backgroundController.tolerations[0].effect="NoSchedule" \
+  --set backgroundController.replicas=2 \
+  --set cleanupController.nodeSelector."eks\.amazonaws\.com/nodegroup"="$NODEGROUP" \
+  --set cleanupController.tolerations[0].key="CriticalAddonsOnly" \
+  --set cleanupController.tolerations[0].operator="Exists" \
+  --set cleanupController.tolerations[0].effect="NoSchedule" \
+  --set cleanupController.replicas=2 \
+  --set reportsController.nodeSelector."eks\.amazonaws\.com/nodegroup"="$NODEGROUP" \
+  --set reportsController.tolerations[0].key="CriticalAddonsOnly" \
+  --set reportsController.tolerations[0].operator="Exists" \
+  --set reportsController.tolerations[0].effect="NoSchedule" \
+  --set reportsController.replicas=2
 
 #####################################################################################
 # KEDA
@@ -140,6 +158,55 @@ helm install keda kedacore/keda --namespace kube-system \
               --set tolerations[0].key=CriticalAddonsOnly \
               --set tolerations[0].operator=Exists \
               --set tolerations[0].effect=NoSchedule
+
+#####################################################################################
+# AWS for Fluent Bit IRSA
+# https://github.com/aws/aws-for-fluent-bit
+#####################################################################################
+SERVICE_ACCOUNT_NAME="fluent-bit"
+SERVICE_ACCOUNT_NAMESPACE="logging"
+FLUENT_BIT_POLICY_NAME="policy-esp-prd-fluent-bit"
+FLUENT_BIT_ROLE_NAME="role-esp-prd-aws-for-fluent-bit"
+S3_BUCKET="s3-esp-prd-app-logs"
+FLUENT_BIT_POLICY_FILE="policy-esp-prd-fluent-bit.json"
+
+cat > $FLUENT_BIT_POLICY_FILE <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetBucketLocation",
+        "s3:ListBucket",
+        "s3:ListBucketMultipartUploads",
+        "s3:ListMultipartUploadParts",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": [
+        "arn:aws:s3:::$S3_BUCKET",
+        "arn:aws:s3:::$S3_BUCKET/*"
+      ]
+    }
+  ]
+}
+EOF
+
+aws iam create-policy \
+  --policy-name $FLUENT_BIT_POLICY_NAME \
+  --policy-document file://$FLUENT_BIT_POLICY_FILE
+
+eksctl create iamserviceaccount \
+  --name $SERVICE_ACCOUNT_NAME \
+  --namespace $SERVICE_ACCOUNT_NAMESPACE \
+  --override-existing-serviceaccounts \
+  --role-name $FLUENT_BIT_ROLE_NAME \
+  --cluster $CLUSTER_NAME \
+  --attach-policy-arn arn:aws:iam::$AWS_ACCOUNT_ID:policy/$FLUENT_BIT_POLICY_NAME \
+  --approve \
+  --region $REGION
+
 
 #####################################################################################
 # Secret for Private ECR

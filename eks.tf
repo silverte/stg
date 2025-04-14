@@ -99,11 +99,12 @@ module "eks" {
       # so we need to disable it to use the default template provided by the AWS EKS managed node group service
       # use_custom_launch_template = false
       # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
-      ami_type        = "AL2023_ARM_64_STANDARD"
-      name            = "eksng-${var.service}-${var.environment}-mgmt"
-      use_name_prefix = false
-      instance_types  = ["c7g.2xlarge"]
-      capacity_type   = "ON_DEMAND"
+      ami_type         = "AL2023_ARM_64_STANDARD"
+      name             = "eksng-${var.service}-${var.environment}-mgmt"
+      use_name_prefix  = false
+      instance_types   = ["c7g.2xlarge"]
+      capacity_type    = "ON_DEMAND"
+      user_data_script = file("${path.module}/eks-user-data.sh")
 
       lanch_template_name             = "ekslt-${var.environment}-mgmt"
       launch_template_use_name_prefix = false

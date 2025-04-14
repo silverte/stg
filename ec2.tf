@@ -802,7 +802,7 @@ module "ec2_admin" {
   disable_api_termination     = true
   # https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/hibernating-prerequisites.html#hibernation-prereqs-supported-amis
   hibernation                 = false
-  user_data_base64            = base64encode(file("./user_data_deprecated.sh"))
+  user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_admin_private_ip
   iam_instance_profile        = "role-esp-stg-ssm"

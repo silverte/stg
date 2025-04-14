@@ -49,7 +49,7 @@ spec:
       # If your pod's terminationGracePeriodSeconds is larger than this terminationGracePeriod, Karpenter may forcibly delete the pod
       # before it has its full terminationGracePeriod to cleanup.
       # Note: changing this value in the nodepool will drift the nodeclaims.
-      # terminationGracePeriod: 300s
+      terminationGracePeriod: 60s
 
       # Requirements that constrain the parameters of provisioned nodes.
       # These requirements are combined with pod.spec.topologySpreadConstraints, pod.spec.affinity.nodeAffinity, pod.spec.affinity.podAffinity, and pod.spec.nodeSelector rules.
