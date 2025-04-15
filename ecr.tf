@@ -8,7 +8,7 @@ module "ecr-app" {
   for_each = toset(var.ecr_names)
 
   repository_name                 = each.key
-  repository_image_tag_mutability = "IMMUTABLE"
+  repository_image_tag_mutability = "MUTABLE"
 
   # repository_read_write_access_arns = [data.aws_caller_identity.current.arn]
   create_lifecycle_policy = true

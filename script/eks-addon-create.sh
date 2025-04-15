@@ -159,6 +159,45 @@ helm install keda kedacore/keda --namespace kube-system \
               --set tolerations[0].operator=Exists \
               --set tolerations[0].effect=NoSchedule
 
+NAMESPACES=(
+  esp-fo-stg
+  esp-hims-stg
+  esp-if-stg
+  esp-hcas-stg
+  esp-hpas-stg
+)
+
+for ns in "${NAMESPACES[@]}"; do
+  echo "Processing namespace: $ns"
+  deployments=$(kubectl get deploy -n "$ns" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+
+  for deploy in $deployments; do
+    filename="${deploy}-${ns}-scaledobject.yaml"
+    echo "Generating: $filename"
+
+    cat <<EOF > "$filename"
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ${deploy}-cron-scaler
+  namespace: ${ns}
+spec:
+  scaleTargetRef:
+    name: ${deploy}
+  minReplicaCount: 0
+  maxReplicaCount: 1
+  triggers:
+    - type: cron
+      metadata:
+        timezone: Asia/Seoul
+        start: 00 08 * * *
+        end: 00 23 * * *
+        desiredReplicas: "1"
+EOF
+
+  done
+done              
+
 #####################################################################################
 # AWS for Fluent Bit IRSA
 # https://github.com/aws/aws-for-fluent-bit
