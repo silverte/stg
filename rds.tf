@@ -310,6 +310,14 @@ module "aurora-postgresql" {
   # ]
   # enabled_cloudwatch_logs_exports = ["postgresql"]
   # create_cloudwatch_log_group     = true
+  create_monitoring_role = true
+  monitoring_interval    = 60
+  monitoring_role_arn    = aws_iam_role.rds_monitoring_role.arn
+
+  cluster_performance_insights_enabled = true
+  # cluster_performance_insights_kms_key_id       = data.aws_kms_key.rds.arn
+  cluster_performance_insights_retention_period = 7
+
 
   tags = merge(
     local.tags,
@@ -318,4 +326,27 @@ module "aurora-postgresql" {
       "map-migrated" = "commM6LD1XNIQQ"
     },
   )
+}
+
+
+resource "aws_iam_role" "rds_monitoring_role" {
+  name = "role-${var.service}-${var.environment}-rds-monitoring"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "monitoring.rds.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "rds_monitoring_attachment" {
+  role       = aws_iam_role.rds_monitoring_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }

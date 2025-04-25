@@ -12,18 +12,7 @@ module "efs-app" {
   creation_token = "efs-${var.service}-${var.environment}-${var.efs_app_name}"
   encrypted      = true
 
-  # Used to create a file system that uses One Zone storage classes
-  # availability_zone_name = local.azs[0]
-
-  # performance_mode = "maxIO"
-  # NB! PROVISIONED TROUGHPUT MODE WITH 256 MIBPS IS EXPENSIVE ~$1500/month
-  # throughput_mode                 = "provisioned"
-  # provisioned_throughput_in_mibps = 256
-
-  # lifecycle_policy = {
-  #   transition_to_ia                    = "AFTER_30_DAYS"
-  #   transition_to_primary_storage_class = "AFTER_1_ACCESS"
-  # }
+  throughput_mode = "elastic"
 
   # File system policy
   attach_policy = false
