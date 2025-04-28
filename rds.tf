@@ -310,7 +310,7 @@ module "aurora-postgresql" {
   # ]
   # enabled_cloudwatch_logs_exports = ["postgresql"]
   # create_cloudwatch_log_group     = true
-  create_monitoring_role = true
+  create_monitoring_role = false
   monitoring_interval    = 60
   monitoring_role_arn    = aws_iam_role.rds_monitoring_role.arn
 
