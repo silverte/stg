@@ -42,8 +42,8 @@ module "iam_assumable_role_admin" {
   role_requires_mfa   = true
   attach_admin_policy = true
   custom_role_policy_arns = [
-    module.iam_policy_restrict_ip.arn,
-    module.iam_policy_restrict_region.arn,
+    # module.iam_policy_restrict_ip.arn,
+    # module.iam_policy_restrict_region.arn,
   ]
 
   tags = merge(
