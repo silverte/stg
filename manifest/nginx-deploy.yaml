@@ -14,17 +14,18 @@ spec:
       labels:
         app: nginx
     spec:
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: "arch-type"
-          operator: In
-          values:
-          - "arm64"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: 'arch-type'
+                    operator: In
+                    values:
+                      - 'arm64'
       containers:
         - name: nginx-container
+          image: nginx
           resources:
             limits:
               cpu: 200m
@@ -32,7 +33,6 @@ affinity:
             requests:
               cpu: 100m
               memory: 128Mi
-          image: nginx
           volumeMounts:
             - name: timezone
               mountPath: /etc/localtime

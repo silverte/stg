@@ -253,6 +253,7 @@ module "aurora-postgresql" {
   name                                 = "rds-${var.service}-${var.environment}-${var.rds_aurora_cluster_name}"
   engine                               = var.rds_aurora_cluster_engine
   engine_version                       = var.rds_aurora_cluster_engine_version
+  snapshot_identifier                  = "arn:aws:rds:ap-northeast-2:026090541979:cluster-snapshot:rds-esp-stg-aurora-postgresql-main"
   database_name                        = var.rds_aurora_cluster_database_name
   master_username                      = var.rds_aurora_master_username
   manage_master_user_password          = true
