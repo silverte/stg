@@ -111,16 +111,16 @@ module "iam_policy_container_app" {
 				"s3:DeleteObject"
 			],
 			"Resource": [
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-contents/*",
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-files/*"
+				"arn:aws:s3:::s3-${var.service}-dev-cm-contents/*",
+				"arn:aws:s3:::s3-${var.service}-dev-cm-files/*"
 			]
 		},
 		{
 			"Effect": "Allow",
 			"Action": "s3:ListBucket",
 			"Resource": [
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-contents",
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-files"
+				"arn:aws:s3:::s3-${var.service}-dev-cm-contents",
+				"arn:aws:s3:::s3-${var.service}-dev-cm-files"
 			]
 		},
 		{
@@ -132,7 +132,7 @@ module "iam_policy_container_app" {
 				"sqs:GetQueueAttributes",
 				"sqs:GetQueueUrl"
 			],
-			"Resource": "arn:aws:sqs:ap-northeast-2:${var.accounts["dev"]}:sqs-${var.service}-${var.environment}-app.fifo"
+			"Resource": "arn:aws:sqs:ap-northeast-2:${var.accounts["stg"]}:sqs-${var.service}-${var.environment}-app.fifo"
 		},
 		{
 			"Effect": "Allow",
@@ -178,16 +178,16 @@ module "iam_policy_vm_app" {
 				"s3:DeleteObject"
 			],
 			"Resource": [
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-contents/*",
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-files/*"
+				"arn:aws:s3:::s3-${var.service}-dev-cm-contents/*",
+				"arn:aws:s3:::s3-${var.service}-dev-cm-files/*"
 			]
 		},
 		{
 			"Effect": "Allow",
 			"Action": "s3:ListBucket",
 			"Resource": [
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-contents",
-				"arn:aws:s3:::s3-${var.service}-${var.environment}-cm-files"
+				"arn:aws:s3:::s3-${var.service}-dev-cm-contents",
+				"arn:aws:s3:::s3-${var.service}-dev-cm-files"
 			]
 		},
 		{
@@ -199,7 +199,7 @@ module "iam_policy_vm_app" {
 				"sqs:GetQueueAttributes",
 				"sqs:GetQueueUrl"
 			],
-			"Resource": "arn:aws:sqs:ap-northeast-2:${var.accounts["dev"]}:sqs-${var.service}-${var.environment}-app.fifo"
+			"Resource": "arn:aws:sqs:ap-northeast-2:${var.accounts["stg"]}:sqs-${var.service}-${var.environment}-app.fifo"
 		},
 		{
 			"Effect": "Allow",
@@ -265,6 +265,113 @@ EOF
     local.tags,
     {
       Name = "policy-${var.service}-${var.environment}-vm-app-default-initial"
+    },
+  )
+}
+
+#####################################################################################
+# IAM policy for EKS admin
+#####################################################################################
+module "iam_policy_eks_admin" {
+  source        = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  create_policy = var.create_iam_policy
+
+  name        = "policy-${var.service}-${var.environment}-eks-admin"
+  path        = "/"
+  description = "IAM policy for EKS admin"
+
+  policy = <<EOF
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": "eks:*",
+			"Resource": "*"
+		}
+	]
+}
+EOF
+
+  tags = merge(
+    local.tags,
+    {
+      Name = "policy-${var.service}-${var.environment}-eks-admin"
+    },
+  )
+}
+
+#####################################################################################
+# IAM policy for EKS node viewer
+#####################################################################################
+module "iam_policy_eks_node_viewer" {
+  source        = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  create_policy = var.create_iam_policy
+
+  name        = "policy-${var.service}-${var.environment}-eks-node-viewer"
+  path        = "/"
+  description = "IAM policy for EKS node viewer"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeSpotPriceHistory",
+        "pricing:GetProducts"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+
+  tags = merge(
+    local.tags,
+    {
+      Name = "policy-${var.service}-${var.environment}-eks-node-viewer"
+    },
+  )
+}
+
+#####################################################################################
+# IAM policy for eksctl
+#####################################################################################
+module "iam_policy_eksctl" {
+  source        = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  create_policy = var.create_iam_policy
+
+  name        = "policy-${var.service}-${var.environment}-eksctl"
+  path        = "/"
+  description = "IAM policy for eksctl"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetOpenIDConnectProvider",
+        "ec2:DescribeLaunchTemplateVersions"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::${var.accounts["stg"]}:role/role-${var.service}-${var.environment}-efs-csi-driver"
+    }
+  ]
+}
+EOF
+
+  tags = merge(
+    local.tags,
+    {
+      Name = "policy-${var.service}-${var.environment}-eksctl"
     },
   )
 }

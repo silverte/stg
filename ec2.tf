@@ -25,7 +25,7 @@ module "ec2_workbench" {
   user_data_base64            = base64encode(file("./user_data_app.sh"))
   user_data_replace_on_change = true
   private_ip                  = var.ec2_workbench_private_ip
-  iam_instance_profile        = "role-${var.service}-${var.environment}-vm-app-default"
+  iam_instance_profile        = "role-${var.service}-${var.environment}-eks-admin"
 
   metadata_options = {
     http_endpoint               = "enabled"

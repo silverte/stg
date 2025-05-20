@@ -235,6 +235,12 @@ resource "aws_iam_role" "vm_app" {
       Action = "sts:AssumeRole"
     }]
   })
+  tags = merge(
+    local.tags,
+    {
+      Name = "role-${var.service}-${var.environment}-vm-app-default"
+    },
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "attach_vm_default" {
@@ -256,4 +262,60 @@ resource "aws_iam_role_policy_attachment" "attach_vm_ssm" {
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "role-${var.service}-${var.environment}-vm-app-default"
   role = aws_iam_role.vm_app.name
+}
+
+
+#################################################################################
+# IAM assumable role for EKS admin
+#################################################################################
+resource "aws_iam_role" "eks_admin" {
+  name = "role-${var.service}-${var.environment}-eks-admin"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+  tags = merge(
+    local.tags,
+    {
+      Name = "role-${var.service}-${var.environment}-eks-admin"
+    },
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "attach_eksctl" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = module.iam_policy_eksctl.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_eks_node_viewer" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = module.iam_policy_eks_node_viewer.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_eks_admin" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = module.iam_policy_eks_admin.arn
+}
+
+
+resource "aws_iam_role_policy_attachment" "attach_ecr_poweruser" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+}
+
+resource "aws_iam_role_policy_attachment" "attach_cf_fullaccess" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
+}
+
+resource "aws_iam_instance_profile" "ec2_profile_eks-admin" {
+  name = "role-${var.service}-${var.environment}-eks-admin"
+  role = aws_iam_role.eks_admin.name
 }
