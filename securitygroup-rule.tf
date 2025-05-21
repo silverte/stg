@@ -9,7 +9,7 @@ resource "null_resource" "add_sg_rules_permanent" {
     command = <<EOF
 #!/bin/bash
 SG_IDS=$(aws ec2 describe-security-groups \
-  --query "SecurityGroups[?contains(GroupName, 'market') || contains(GroupName, 'pay') || contains(GroupName, 'checkin') || contains(GroupName, 'homepage') || contains(GroupName, 'healthcare')].GroupId" \
+  --query "SecurityGroups[?contains(GroupName, 'market') || contains(GroupName, 'batch') || contains(GroupName, 'pay') || contains(GroupName, 'checkin') || contains(GroupName, 'homepage') || contains(GroupName, 'healthcare')].GroupId" \
   --output text)
 
 for SG_ID in $SG_IDS; do
@@ -61,7 +61,7 @@ resource "null_resource" "remove_sg_rules_permanent" {
     command     = <<EOF
 #!/bin/bash
 SG_IDS=$(aws ec2 describe-security-groups \
-  --query "SecurityGroups[?contains(GroupName, 'market') || contains(GroupName, 'pay') || contains(GroupName, 'checkin') || contains(GroupName, 'homepage') || contains(GroupName, 'healthcare')].GroupId" \
+  --query "SecurityGroups[?contains(GroupName, 'market') || contains(GroupName, 'batch') || contains(GroupName, 'pay') || contains(GroupName, 'checkin') || contains(GroupName, 'homepage') || contains(GroupName, 'healthcare')].GroupId" \
   --output text)
 
 for SG_ID in $SG_IDS; do
