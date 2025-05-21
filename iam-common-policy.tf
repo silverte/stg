@@ -359,6 +359,14 @@ module "iam_policy_eksctl" {
       ],
       "Resource": "*"
     },
+	{
+        "Effect": "Allow",
+         "Action": [
+            "iam:GetRole",
+            "iam:PassRole"
+        ],
+        "Resource": "arn:aws:iam::${var.accounts["stg"]}:role/role-${var.service}-${var.environment}-container-app-default"
+    },
     {
       "Effect": "Allow",
       "Action": "iam:PassRole",

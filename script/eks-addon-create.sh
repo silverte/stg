@@ -276,38 +276,58 @@ kubectl create ns esp-if-stg
 #####################################################################################
 # create pod identity association
 #####################################################################################
+ROLE_ARN="arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+
+# esp-core 네임스페이스
+eksctl create podidentityassociation \
+    --cluster ${CLUSTER_NAME} \
+    --namespace "esp-core" \
+    --service-account-name esp-common-api-config-reader-${ENVIRONMENT} \
+    --region ${REGION} \
+    --role-arn ${ROLE_ARN}
+
+# esp-fo-stg 네임스페이스
+for SA in hezo-fo-customer-api-config-reader hezo-fo-customer-config-reader hezo-fo-lodgement-api-config-reader hezo-fo-order-api-config-reader hezo-fo-product-api-config-reader hezo-fo-promotion-api-config-reader; do
 eksctl create podidentityassociation \
     --cluster ${CLUSTER_NAME} \
     --namespace "esp-fo-${ENVIRONMENT}" \
-    --service-account-name default \
-    --permission-policy-arns="arn:aws:iam::${AWS_ACCOUNT_ID}:policy/policy-esp-${ENVIRONMENT}-container-app-default" \
-    --region $REGION \
-    --role-name "role-esp-${ENVIRONMENT}-container-app-default"
+    --service-account-name ${SA}-${ENVIRONMENT} \
+    --region ${REGION} \
+    --role-arn ${ROLE_ARN}
+done
 
+# esp-hcas-stg 네임스페이스
 eksctl create podidentityassociation \
     --cluster ${CLUSTER_NAME} \
     --namespace "esp-hcas-${ENVIRONMENT}" \
-    --service-account-name default \
-    --region $REGION \
-    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+    --service-account-name hcas-bo-ui-config-reader-${ENVIRONMENT} \
+    --region ${REGION} \
+    --role-arn ${ROLE_ARN}
 
+# esp-hims-stg 네임스페이스
+for SA in hims-bo-analyze-api-config-reader hims-bo-calculate-api-config-reader hims-bo-common-api-config-reader hims-bo-cooperation-api-config-reader hims-bo-counsel-api-config-reader hims-bo-customer-api-config-reader hims-bo-display-api-config-reader hims-bo-order-api-config-reader hims-bo-product-api-config-reader hims-bo-promotion-api-config-reader hims-bo-pub-ui-config-reader hims-bo-ui-config-reader hims-bo-websquare-api-config-reader hims-bo-welfare-api-config-reader; do
 eksctl create podidentityassociation \
     --cluster ${CLUSTER_NAME} \
     --namespace "esp-hims-${ENVIRONMENT}" \
-    --service-account-name default \
-    --region $REGION \
-    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+    --service-account-name ${SA}-${ENVIRONMENT} \
+    --region ${REGION} \
+    --role-arn ${ROLE_ARN}
+done
 
+# esp-hpas-stg 네임스페이스
 eksctl create podidentityassociation \
     --cluster ${CLUSTER_NAME} \
     --namespace "esp-hpas-${ENVIRONMENT}" \
-    --service-account-name default \
-    --region $REGION \
-    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+    --service-account-name hpas-bo-ui-config-reader-${ENVIRONMENT} \
+    --region ${REGION} \
+    --role-arn ${ROLE_ARN}
 
+# esp-if-stg 네임스페이스
+for SA in external-customer-api-config-reader external-order-api-config-reader external-product-api-config-reader; do
 eksctl create podidentityassociation \
     --cluster ${CLUSTER_NAME} \
     --namespace "esp-if-${ENVIRONMENT}" \
-    --service-account-name default \
-    --region $REGION \
-    --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/role-esp-${ENVIRONMENT}-container-app-default"
+    --service-account-name ${SA}-${ENVIRONMENT} \
+    --region ${REGION} \
+    --role-arn ${ROLE_ARN}
+done
