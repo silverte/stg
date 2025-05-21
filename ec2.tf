@@ -150,7 +150,7 @@ module "ec2_batch_worker" {
 ###################################################################################
 module "ec2_external_interface" {
   source = "terraform-aws-modules/ec2-instance/aws"
-  create = var.create_ec2_batch_worker
+  create = var.create_ec2_external_interface
 
   name = "ec2-${var.service}-${var.environment}-external-interface"
 

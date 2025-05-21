@@ -304,6 +304,10 @@ resource "aws_iam_role_policy_attachment" "attach_eks_admin" {
   policy_arn = module.iam_policy_eks_admin.arn
 }
 
+resource "aws_iam_role_policy_attachment" "attach_ecr_ssm" {
+  role       = aws_iam_role.eks_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
 
 resource "aws_iam_role_policy_attachment" "attach_ecr_poweruser" {
   role       = aws_iam_role.eks_admin.name
